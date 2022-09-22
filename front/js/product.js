@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------
 const url = new URL (window.location.href);
 console.log(url);
-let id = url.searchParams.get("id");
+const id = url.searchParams.get("id");
 console.log(id);
 
 const dataApi = fetch("http://localhost:3000/api/products")
@@ -78,7 +78,6 @@ if (panier.hasOwnProperty(id)) { //si le panier contient déjà un élément de 
 	else {
 		panier[id][color] = quantite;
 	}
-
 }
 else {
 	panier[id]={};
