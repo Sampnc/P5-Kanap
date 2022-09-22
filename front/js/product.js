@@ -20,24 +20,19 @@ const dataApi = fetch("http://localhost:3000/api/products")
   		}
   	}
 
-  	alert(document.title);
+  	(document.title);
   	document.title = product.name;
 
 	  let a = document.createElement("a");
 	  a.href = "./product.html?id=" + product._id;
 	  console.log(a);
 
-	  let article = document.createElement("article");
-
-      
+	  let article = document.createElement("article");      
 
 	  let image = document.createElement("img");
 	  image.src = product.imageUrl; 
 	  image.alt = product.altTxt;
 	  document.querySelector(".item__img").appendChild(image);
-
-	 
-
 
 	  document.getElementById("title").textContent = product.name;
 
@@ -45,7 +40,7 @@ const dataApi = fetch("http://localhost:3000/api/products")
 	  
 	  document.getElementById("description").textContent = product.description;
 
-	  let couleurs = product.colors;
+	  const couleurs = product.colors;
 	  for (let c = 0; c < couleurs.length; c ++) {
 	  	let couleur = couleurs[c];
 	  	let option = document.createElement("option");
@@ -54,11 +49,42 @@ const dataApi = fetch("http://localhost:3000/api/products")
 	  	document.getElementById("colors").appendChild(option);
 	  }
 
-
-
-
-
   })
   .catch(function(error) {
     alert(error)
   });
+
+ 
+document.getElementById("addToCart").onclick = function(){
+
+let quantite = parseInt(document.getElementById("quantity").value);
+console.log(quantite);
+
+
+let color = document.getElementById("colors").value;
+console.log(color);
+
+  //------- LE LOCAL STORAGE --------
+
+let panier = JSON.parse(localStorage.getItem("panier"));
+if (panier==null) { //si le panier n'existe pas, on le crée
+	panier = {}; 
+}
+
+if (panier.hasOwnProperty(id)) { //si le panier contient déjà un élément de cet Id
+	if (panier[id].hasOwnProperty(color)) { //si le dictionnaire de l'id contient déjà cette couleur
+		panier[id][color] += quantite;
+	}
+	else {
+		panier[id][color] = quantite;
+	}
+
+}
+else {
+	panier[id]={};
+	panier[id][color]=quantite;
+}
+localStorage.setItem("panier", JSON.stringify(panier));
+console.log(panier);
+
+}
