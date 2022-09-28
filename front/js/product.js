@@ -60,7 +60,6 @@ document.getElementById("addToCart").onclick = function(){
 let quantite = parseInt(document.getElementById("quantity").value);
 console.log(quantite);
 
-
 let color = document.getElementById("colors").value;
 console.log(color);
 
