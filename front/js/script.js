@@ -1,38 +1,40 @@
-//------------------------------------------------------------------------
-// Récupération des produits de l'api
-//------------------------------------------------------------------------
-const dataApi = fetch("http://localhost:3000/api/products")
-  // pour la réponse retournée donne le résultat en json
+/*---------Récupération de l'id du produit via l' URL----------------
+---------------------------------------------------------------------*/
+const dataApi = fetch("http://localhost:3000/api/products/")
+  // Pour la réponse retournée donne le résultat en json
   .then(reponse => reponse.json())
-  .then(listProducts => {
-    for (let k = 0; k < listProducts.length; k ++) {
-      let product = listProducts[k];
+  .then(listeProduits => {
+
+    // Boucle pour afficher chaque élément/produit de l'API
+    for (let k = 0; k < listeProduits.length; k++) {
+      let produit = listeProduits[k];
 
       let a = document.createElement("a");
-      a.href = "./product.html?id=" + product._id;
+      a.href = "product.html?id="+produit._id;
 
-      let article = document.createElement("article");
+      let article = document.createElement("article"); //création du bloc article
 
       let image = document.createElement("img");
-      image.src = product.imageUrl;
-      image.alt = product.altTxt;
+      image.src = produit.imageUrl;
+      image.alt = produit.altTxt;
 
       let titre = document.createElement("h3");
-      titre.className = "productName";
-      titre.textContent = product.name;
+      titre.className = "produitName";
+      titre.textContent = produit.name;
 
       let description = document.createElement("p");
-      description.className = "productDescription";
-      description.textContent = product.description;
+      description.className = "produitDescription";
+      description.textContent = produit.description;
 
       article.appendChild(image);
       article.appendChild(titre);
       article.appendChild(description);
       a.appendChild(article);
-      document.getElementById('items').appendChild(a);
+      document.getElementById("items").appendChild(a);
     }
 
   })
-  .catch(function(error) {
+  .catch(function(err) {
     alert(error)
+    // Une erreur est survenue
   });
