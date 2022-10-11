@@ -1,6 +1,6 @@
 let panier = JSON.parse(localStorage.getItem("panier"));
 
-const dataApi = fetch("http://localhost:3000/api/products")
+const dataApi = fetch("http://localhost:3000/api/products/")
   // pour la réponse retournée donne le résultat en json
   .then(reponse => reponse.json())
   .then(listeProduits => {
@@ -109,7 +109,6 @@ const dataApi = fetch("http://localhost:3000/api/products")
 			article.appendChild(div1);
 			article.appendChild(div2);
 			document.getElementById("cart__items").appendChild(article);
-			console.log(article);
 
 			totalPrix += parseInt(prix.textContent);
 			totalProduit += parseInt(input.value); 
@@ -126,12 +125,13 @@ const dataApi = fetch("http://localhost:3000/api/products")
 
 /*---------Formulaire----------------
 ---------------------------------------------------------------------*/
-let orderBouton = document.getElementById("order");
+
+// Regex
 let regexName = /^(?=.{1,50}$)[a-z\u00C0-\u00FF]+(?:['-_.\s][a-z\u00C0-\u00FF]+)*$/i;
 let regexLocation = /^[a-zA-Z0-9\u00C0-\u00FF\s,. '-]{3,}$/;
-let regexEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
 
-orderBouton.addEventListener("click", (e) => {
+document.querySelector(".cart__order__form__submit").addEventListener("click", async(e) =>  {
+	e.preventDefault();
 // Prépare l'obj contact pour la requête POST
     let contact = {
     firstName: document.getElementById("firstName").value,
@@ -139,30 +139,58 @@ orderBouton.addEventListener("click", (e) => {
     address: document.getElementById("address").value,
     city: document.getElementById("city").value,
     email: document.getElementById("email").value,
-    };
+    }
+    let products = Object.keys(panier);
+
      // on valide que le formulaire soit correctement rempli
     if (
-	      (regexEmail.test(contact.email) == true) &
-	      (regexName.test(contact.firstName) == true) &
-	      (regexName.test(contact.lastName) == true) &
-	      (regexLocation.test(contact.city) == true) &
-	      (regexLocation.test(contact.address) == true)
-	    ) {
-     } else {
-      // Avertir l'utilisateur qu'il n'a pas (ou mal) rempli les champs d'informations
-      alert("Tous les champs d'informations doivent être correctement remplis");
+      (regexName.test(contact.firstName) == true) &&
+      (regexName.test(contact.lastName) == true) &&
+      (regexLocation.test(contact.address) == true) &&
+      (regexLocation.test(contact.city) == true)) {
+      localStorage.setItem("contact", JSON.stringify(contact));
+
+
+      let reponse = await fetch("http://localhost:3000/api/products/order", {
+	      method: "POST",
+	      body: JSON.stringify( {contact:contact, products:products}),
+	      headers: {"Content-Type": "application/json",
+	      },
+      });
+      let result = await reponse.json();
+      let orderId = result["orderId"];
+      window.location.href = "confirmation.html?orderId="+orderId;
+	}
+	
+ 	else {
+ 		if (regexName.test(contact.firstName) == false) {
+ 				document.getElementById("firstNameErrorMsg").textContent = "Prénom invalide";
+ 			}
+ 		if (regexName.test(contact.lastName) == false) {
+ 				document.getElementById("lastNameErrorMsg").textContent = "Nom invalide";
+ 			}
+ 		if (regexLocation.test(contact.address) == false) {
+ 				document.getElementById("addressErrorMsg").textContent = "Adresse invalide";
+ 			}
+ 		if (regexLocation.test(contact.city) == false) {
+ 				document.getElementById("cityErrorMsg").textContent = "Nom de ville invalide";
+ 			}
+ 		if (regexName.test(contact.email) == false) {
+ 				document.getElementById("emailErrorMsg").textContent = "Adresse mail invalide";
+ 			}
     }
+
 });
-console.log(contact);
+
+
+
+
+	
+
+
+
+
 
   		
 
 
-// Vérifier que l'utilisateur rentre des informations conformes au formulaire de contact
-
-  	
-
-  	
-    
-
-    //fetch("http://localhost:3000/api/products/order");*/

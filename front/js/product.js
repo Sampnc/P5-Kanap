@@ -1,5 +1,5 @@
-/*---------Récupération de l'id du produit via l' URL----------------
----------------------------------------------------------------------*/
+//---------Récupération de l'id du produit via l' URL----------------
+
 //la variable url récupère l'url de la page
 const url = new URL (window.location.href);
 console.log(url);
@@ -7,38 +7,52 @@ console.log(url);
 const id = url.searchParams.get("id");
 console.log(id);
 
+
 const dataApi = fetch("http://localhost:3000/api/products")
+  // pour la réponse retournée donne le résultat en json
   .then(reponse => reponse.json())
-  .then(listeProduits => {
+  .then(listProducts => {
 
-  	let produit = listeProduits[0];
+  	let product = listProducts[0];
 
-  	for (let k = 0; k < listeProduits.length; k ++) {
-  		//console.log(listeProduits[k]._id, id)
-  		if (listeProduits[k]._id == id) {
-  			produit = listeProduits[k];
+  	for (let k = 0; k < listProducts.length; k ++) {
+  		//console.log(listProducts[k]._id, id)
+  		if (listProducts[k]._id == id) {
+  			product = listProducts[k];
   		}
   	}
-  	
-  	document.title = produit.name;	
 
-  	let a = document.createElement("a");
-	a.href = "./product.html?id=" + produit._id;
+  	//fonction feuilleProduit (listeProduits)
+    // Affichage du produit par page produit
 
-	let article = document.createElement("article");      
+    // insertion du nom du canapé dans l'onglet de la page
+  	(document.title);
+  	document.title = product.name;
 
-	let image = document.createElement("img");
-	image.src = produit.imageUrl; 
-	image.alt = produit.altTxt;
-	document.querySelector(".item__img").appendChild(image);
 
-	document.getElementById("title").textContent = produit.name;
+	  let a = document.createElement("a");
+	  a.href = "./product.html?id=" + product._id;
+	  console.log(a);
 
-	document.getElementById("price").textContent = produit.price;
-	  
-	document.getElementById("description").textContent = produit.description;
+	  let article = document.createElement("article"); 
 
-	const couleurs = produit.colors;
+	  // insertion image du canapé
+	  let image = document.createElement("img");
+	  image.src = product.imageUrl; 
+	  image.alt = product.altTxt;
+	  document.querySelector(".item__img").appendChild(image);
+
+	  // insertion du nom du canapé
+	  document.getElementById("title").textContent = product.name;
+
+	  //insertion du prix du canapé
+	  document.getElementById("price").textContent = product.price;
+
+	  // insertion description du canapé
+	  document.getElementById("description").textContent = product.description;
+
+	  // parcours du tableau de couleurs et insertion de celles-ci dans choix
+	  const couleurs = product.colors;
 	  for (let c = 0; c < couleurs.length; c ++) {
 	  	let couleur = couleurs[c];
 	  	let option = document.createElement("option");
@@ -52,41 +66,35 @@ const dataApi = fetch("http://localhost:3000/api/products")
     alert(error)
   });
 
-//choix des quantités et couleurs dynamiques au click de la commande
+ 
 document.getElementById("addToCart").onclick = function(){
 
-	let color = document.getElementById("colors").value;
-	console.log(color);
+let quantite = parseInt(document.getElementById("quantity").value);
+console.log(quantite);
 
-	let quantite = parseInt(document.getElementById("quantity").value);
-	console.log(quantite);
+let color = document.getElementById("colors").value;
+console.log(color);
 
-	if (color != "" && quantite!=0) {
-		/*---------Local Storage----------------
-		---------------------------------------------------------------------*/
-		let panier = JSON.parse(localStorage.getItem("panier"));
-		if (panier==null) { //si le panier n'existe pas, on le crée
-			panier = {};
-		}
+  //------- LE LOCAL STORAGE --------
 
-		if (panier.hasOwnProperty(id)) { //si le panier contient déjà un élément de cet Id
-			if (panier[id].hasOwnProperty(color)) { //si le dictionnaire de l'id contient déjà cette couleur
-				panier[id][color] += quantite;
-			console.log(panier);
-			}
-			else {
-				panier[id][color] = quantite;
-			}
-		}
-		else {
-			panier[id]={};
-			panier[id][color]=quantite;
-		}
-		localStorage.setItem("panier", JSON.stringify(panier));
-		alert("Article(s) ajouté(s) au panier");
-		console.log(panier);
+let panier = JSON.parse(localStorage.getItem("panier"));
+if (panier==null) { //si le panier n'existe pas, on le crée
+	panier = {}; 
+}
+
+if (panier.hasOwnProperty(id)) { //si le panier contient déjà un élément de cet Id
+	if (panier[id].hasOwnProperty(color)) { //si le dictionnaire de l'id contient déjà cette couleur
+		panier[id][color] += quantite;
 	}
 	else {
-		alert("Pour valider cet article, vous devez choisir une couleur et une quantité entre 1 et 100");
+		panier[id][color] = quantite;
 	}
+}
+else {
+	panier[id]={};
+	panier[id][color]=quantite;
+}
+localStorage.setItem("panier", JSON.stringify(panier));
+console.log(panier);
+
 }
