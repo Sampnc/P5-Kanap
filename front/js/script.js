@@ -1,12 +1,5 @@
-//---------Récupération des produits de l'API----------------
-
-const dataApi = fetch("http://localhost:3000/api/products/")
-  // Pour la réponse retournée donne le résultat en json
-  .then(reponse => reponse.json())
-  .then(listeProduits => {
-
-    //fonction feuilleProduit (listeProduits)
-    // Affichage des produits
+// Crée une nouvelle fiche produit pour chaque produit présent dans l'API
+function affichageProduits(listeProduits) {
     for (let k = 0; k < listeProduits.length; k++) {
       let produit = listeProduits[k];
 
@@ -24,21 +17,34 @@ const dataApi = fetch("http://localhost:3000/api/products/")
       image.alt = produit.altTxt;
       article.appendChild(image);
 
+      //insertion des titres
       let titre = document.createElement("h3");
       titre.className = "produitName";
       titre.textContent = produit.name;
       article.appendChild(titre);
 
+      //insertion des descriptions
       let description = document.createElement("p");
       description.className = "produitDescription";
       description.textContent = produit.description;
       article.appendChild(description);
 
+      //insertion des liens dans la section items
       document.getElementById("items").appendChild(a);
     }
+}
 
+//Récupération des produits de l'api
+
+fetch("http://localhost:3000/api/products")
+    .then(reponse => reponse.json())
+    .then(listeProduits => {
+        affichageProduits(listeProduits);
   })
-  .catch(function(err) {
-    alert(error)
+    .catch(function(err) {
+    alert(erreur)
     // Une erreur est survenue
-  });
+});
+
+
+
